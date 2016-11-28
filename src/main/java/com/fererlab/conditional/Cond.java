@@ -1,8 +1,7 @@
 package com.fererlab.conditional;
 
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -16,21 +15,14 @@ public class Cond {
         return new Tree();
     }
 
-    public static Tree tree(ExceptionUnit exceptionUnit) {
-        Tree tree = new Tree();
-        tree.error(exceptionUnit);
-        return tree;
-    }
-
     static class Hash {
 
         private static Logger logger = Logger.getLogger(Tree.class.getName());
         private ExceptionUnit exceptionUnit = (e) -> {
-            logger.log(Level.SEVERE, "got exception while cond, error: " + e, e);
+            logger.log(Level.SEVERE, "got exception while hash cond, error: " + e, e);
         };
         private Map<Object, Unit> hash = new HashMap<>();
-        private Unit defaultUnit = () -> {
-        };
+        private Unit defaultUnit = Unit.empty();
 
         public Hash check(Object key, Unit unit) {
             hash.put(key, unit);
@@ -67,38 +59,34 @@ public class Cond {
 
     static class Tree {
 
+        class CheckUnitPair {
+            private Check check;
+            private Unit unit;
+            private Exception exception;
+
+            private CheckUnitPair(Check check, Unit unit) {
+                this.check = check;
+                this.unit = unit;
+            }
+        }
+
         private static Logger logger = Logger.getLogger(Tree.class.getName());
         private ExceptionUnit exceptionUnit = (e) -> {
-            logger.log(Level.SEVERE, "got exception while cond, error: " + e, e);
+            logger.log(Level.SEVERE, "got exception while tree cond, error: " + e, e);
         };
-        private State state = State.False;
+        private List<CheckUnitPair> checkUnitPairs = new LinkedList<>();
+        private Unit defaultUnit = Unit.empty();
 
         private Tree() {
         }
 
         public Tree check(Check check, Unit unit) {
-            if (!State.False.equals(this.state)) {
-                return this;
-            }
-            try {
-                this.state = check.apply() ? State.True : State.False;
-                if (State.True.equals(this.state)) {
-                    unit.apply();
-                }
-            } catch (Exception e) {
-                handleError(e);
-            }
+            checkUnitPairs.add(new CheckUnitPair(check, unit));
             return this;
         }
 
         public Tree otherwise(Unit unit) {
-            if (State.False.equals(this.state)) {
-                try {
-                    unit.apply();
-                } catch (Exception e) {
-                    handleError(e);
-                }
-            }
+            this.defaultUnit = unit;
             return this;
         }
 
@@ -108,14 +96,41 @@ public class Cond {
         }
 
         private void handleError(Exception e) {
-            this.state = State.Exception;
             exceptionUnit.apply(e);
         }
 
-    }
+        public void eval() {
+            Optional<CheckUnitPair> cupOptional = checkUnitPairs
+                    .stream()
+                    .filter(cup -> {
+                        try {
+                            return cup.check.apply();
+                        } catch (Exception e) {
+                            cup.exception = e;
+                            return true;
+                        }
+                    })
+                    .findFirst();
 
-    enum State {
-        True, False, Exception
+            try {
+                if (cupOptional.isPresent()) {
+                    handleCup(cupOptional);
+                } else {
+                    defaultUnit.apply();
+                }
+            } catch (Exception e) {
+                handleError(e);
+            }
+        }
+
+        private void handleCup(Optional<CheckUnitPair> cupOptional) throws Exception {
+            CheckUnitPair cup = cupOptional.get();
+            if (cup.exception == null) {
+                cup.unit.apply();
+            } else {
+                throw cup.exception;
+            }
+        }
     }
 
 }

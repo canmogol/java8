@@ -2,5 +2,10 @@ package com.fererlab.conditional;
 
 @FunctionalInterface
 public interface Unit {
-	void apply();
+    void apply();
+
+    static Unit empty() {
+        return () -> {
+        };
+    }
 }
