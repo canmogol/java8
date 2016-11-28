@@ -19,6 +19,9 @@ public class Cond {
 	}
 
 	public Cond check(Check check, Unit unit) {
+		if (this.state) {
+			return this;
+		}
 		try {
 			this.state = check.apply();
 			if (this.state) {

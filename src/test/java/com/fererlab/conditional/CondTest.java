@@ -8,7 +8,7 @@ public class CondTest {
 	public void condTest() {
 		Cond
 			.create()
-			.check(() -> "123".startsWith("a"),
+			.check(() -> "123".startsWith("1"),
 				() -> System.out.println("first check, should pass"))
 			.check(() -> "-*/".startsWith("a"),
 				() -> System.out.println("second check, should pass"))
