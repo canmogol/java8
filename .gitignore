@@ -42,5 +42,5 @@ bin/*
 .metadata/*
 .sonar
 .sonar/*
-src/main/resources/proto/*
-src/main/resources/xsd/*
+src/mainOrig/resources/proto/*
+src/mainOrig/resources/xsd/*
