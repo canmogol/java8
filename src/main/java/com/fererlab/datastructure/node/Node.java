@@ -13,32 +13,32 @@ public class Node<T> implements QNode<T>, CNode<T> {
 
     @Override
     public T getValue() {
-        return value;
+	return value;
     }
 
     @Override
     public void setValue(T value) {
-        this.value = value;
+	this.value = value;
     }
 
     @Override
     public QNode<T> getPrevious() {
-        return previous;
+	return previous;
     }
 
     @Override
     public void setPrevious(QNode<T> previous) {
-        this.previous = previous;
+	this.previous = previous;
     }
 
     @Override
     public QNode<T> getNext() {
-        return next;
+	return next;
     }
 
     @Override
     public void setNext(QNode<T> next) {
-        this.next = next;
+	this.next = next;
     }
 
 }

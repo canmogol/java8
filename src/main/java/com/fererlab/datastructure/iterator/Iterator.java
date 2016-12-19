@@ -13,20 +13,20 @@ public abstract class Iterator<T> implements CIterator<T>, QIterator<T> {
     protected abstract void remove(int index);
 
     public boolean hasNext() {
-        return index < getSize();
+	return index < getSize();
     }
 
     @Override
     public T next() {
-        T value = get(index).get();
-        index++;
-        return value;
+	T value = get(index).get();
+	index++;
+	return value;
     }
 
     @Override
     public void remove() {
-        index--;
-        remove(index);
+	index--;
+	remove(index);
     }
 
 }

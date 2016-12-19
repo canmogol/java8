@@ -18,42 +18,42 @@ public class Maybe<T> {
     private boolean empty = true;
 
     private Maybe(T object) {
-        this.setObject(object);
-    }
-
-    private void setObject(T object) {
-        this.object = object;
-        if (this.object != null) {
-            this.empty = false;
-        }
+	this.setObject(object);
     }
 
     public static <T> Maybe<T> empty() {
-        return new Maybe<>(null);
+	return new Maybe<>(null);
     }
 
     public static <T> Maybe<T> create(T t) {
-        return new Maybe<>(t);
+	return new Maybe<>(t);
+    }
+
+    private void setObject(T object) {
+	this.object = object;
+	if (this.object != null) {
+	    this.empty = false;
+	}
     }
 
     public T get() {
-        return object;
+	return object;
     }
 
     public T orElse(T t) {
-        return isEmpty() ? t : get();
+	return isEmpty() ? t : get();
     }
 
     public T orElseThrow(Exception e) throws Exception {
-        if (isEmpty()) {
-            throw e;
-        } else {
-            return get();
-        }
+	if (isEmpty()) {
+	    throw e;
+	} else {
+	    return get();
+	}
     }
 
     public boolean isEmpty() {
-        return empty;
+	return empty;
     }
 
 }

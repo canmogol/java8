@@ -9,7 +9,7 @@ public class LSP {
     public static void main(String[] args) {
 
        /* List<String> users = new ArrayList<>();
-        users.add("jack");
+	users.add("jack");
         users.add("john");
 
         UserService userService = new UserService();
@@ -26,14 +26,14 @@ public class LSP {
     }
 
     private static List<String> somewhereWeDontKnowAbout() {
-        List<String> users2 = new ArrayList<>();
+	List<String> users2 = new ArrayList<>();
 
-        users2.add("tamaguci");
-        users2.add("asimo");
+	users2.add("tamaguci");
+	users2.add("asimo");
 
-        users2 = Collections.unmodifiableList(users2);
+	users2 = Collections.unmodifiableList(users2);
 
-        return users2;
+	return users2;
     }
 
 }

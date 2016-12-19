@@ -6,23 +6,23 @@ public class UserEntity {
     private String username;
 
     public UserEntity(Integer id, String username) {
-        this.id = id;
-        this.username = username;
+	this.id = id;
+	this.username = username;
     }
 
     public Integer getId() {
-        return id;
+	return id;
     }
 
     public void setId(Integer id) {
-        this.id = id;
+	this.id = id;
     }
 
     public String getUsername() {
-        return username;
+	return username;
     }
 
     public void setUsername(String username) {
-        this.username = username;
+	this.username = username;
     }
 }

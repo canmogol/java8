@@ -1,4 +1,4 @@
-package com.fererlab.conditional;
+package com.fererlab.control.conditional;
 
 import org.junit.Test;
 

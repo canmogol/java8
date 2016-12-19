@@ -8,52 +8,34 @@ import java.util.function.Predicate;
 public class PatternMatching {
 
     public static void main(String[] args) {
-        PatternMatching patternMatching = new PatternMatching();
-        try {
-            patternMatching.test();
-        } catch (NoMatch noMatch) {
-            noMatch.printStackTrace();
-        }
-    }
-
-    class User {
-        private String name;
-        private Integer age;
-
-        public User(String name, Integer age) {
-            this.name = name;
-            this.age = age;
-        }
-
-        public String getName() {
-            return name;
-        }
-
-        public Integer getAge() {
-            return age;
-        }
+	PatternMatching patternMatching = new PatternMatching();
+	try {
+	    patternMatching.test();
+	} catch (NoMatch noMatch) {
+	    noMatch.printStackTrace();
+	}
     }
 
     private void test() throws NoMatch {
 
-        User user = new User("john wick", 44);
+	User user = new User("john wick", 44);
 
-        Pattern<User> p = new Pattern<>();
-        p.match(
-                user,
-                p.cond(
-                        u -> u.getAge() > 17,
-                        u -> {
-                            System.out.println("adult = " + u);
-                        }
-                ),
-                p.cond(
-                        u -> u.getAge() < 18,
-                        u -> {
-                            System.out.println("child = " + u);
-                        }
-                )
-        );
+	Pattern<User> p = new Pattern<>();
+	p.match(
+		user,
+		p.cond(
+			u -> u.getAge() > 17,
+			u -> {
+			    System.out.println("adult = " + u);
+			}
+		),
+		p.cond(
+			u -> u.getAge() < 18,
+			u -> {
+			    System.out.println("child = " + u);
+			}
+		)
+	);
 
 
 //        match(user) {
@@ -67,22 +49,39 @@ public class PatternMatching {
 
     }
 
+    class User {
+	private String name;
+	private Integer age;
+
+	public User(String name, Integer age) {
+	    this.name = name;
+	    this.age = age;
+	}
+
+	public String getName() {
+	    return name;
+	}
+
+	public Integer getAge() {
+	    return age;
+	}
+    }
 
     class Pattern<T> {
 
-        public Condition<T> cond(Predicate<T> predicate, Consumer<T> consumer) {
-            return new Condition<>(predicate, consumer);
-        }
+	public Condition<T> cond(Predicate<T> predicate, Consumer<T> consumer) {
+	    return new Condition<>(predicate, consumer);
+	}
 
-        @SafeVarargs
-        public final void match(T t, Condition<T>... conditions) throws NoMatch {
-            Optional<Condition<T>> optionalCondition = Arrays.asList(conditions).stream().filter(condition -> condition.getPredicate().test(t)).findFirst();
-            if (optionalCondition.isPresent()) {
-                optionalCondition.get().getConsumer().accept(t);
-            } else {
-                throw new NoMatch();
-            }
-        }
+	@SafeVarargs
+	public final void match(T t, Condition<T>... conditions) throws NoMatch {
+	    Optional<Condition<T>> optionalCondition = Arrays.asList(conditions).stream().filter(condition -> condition.getPredicate().test(t)).findFirst();
+	    if (optionalCondition.isPresent()) {
+		optionalCondition.get().getConsumer().accept(t);
+	    } else {
+		throw new NoMatch();
+	    }
+	}
 
 
     }
@@ -92,21 +91,21 @@ public class PatternMatching {
 
     class Condition<T> {
 
-        private Predicate<T> predicate;
-        private Consumer<T> consumer;
+	private Predicate<T> predicate;
+	private Consumer<T> consumer;
 
-        public Condition(Predicate<T> predicate, Consumer<T> consumer) {
-            this.predicate = predicate;
-            this.consumer = consumer;
-        }
+	public Condition(Predicate<T> predicate, Consumer<T> consumer) {
+	    this.predicate = predicate;
+	    this.consumer = consumer;
+	}
 
-        public Predicate<T> getPredicate() {
-            return predicate;
-        }
+	public Predicate<T> getPredicate() {
+	    return predicate;
+	}
 
-        public Consumer<T> getConsumer() {
-            return consumer;
-        }
+	public Consumer<T> getConsumer() {
+	    return consumer;
+	}
     }
 
 }
