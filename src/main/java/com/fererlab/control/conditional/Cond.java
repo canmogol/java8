@@ -10,129 +10,129 @@ import java.util.logging.Logger;
 public class Cond {
 
     public static Hash hash() {
-	return new Hash();
+        return new Hash();
     }
 
     public static Tree tree() {
-	return new Tree();
+        return new Tree();
     }
 
     static class Hash {
 
-	private static Logger logger = Logger.getLogger(Hash.class.getName());
-	private ControlException controlException = (e) -> {
-	    logger.log(Level.SEVERE, "got exception while hash cond, error: " + e, e);
-	};
-	private Map<Object, Unit> hash = new HashMap<>();
-	private Unit defaultUnit = Unit.empty();
+        private static Logger logger = Logger.getLogger(Hash.class.getName());
+        private ControlException controlException = (e) -> {
+            logger.log(Level.SEVERE, "got exception while hash cond, error: " + e, e);
+        };
+        private Map<Object, Unit> hash = new HashMap<>();
+        private Unit defaultUnit = Unit.empty();
 
-	public Hash check(Object key, Unit unit) {
-	    hash.put(key, unit);
-	    return this;
-	}
+        public Hash check(Object key, Unit unit) {
+            hash.put(key, unit);
+            return this;
+        }
 
-	public Hash otherwise(Unit unit) {
-	    this.defaultUnit = unit;
-	    return this;
-	}
+        public Hash otherwise(Unit unit) {
+            this.defaultUnit = unit;
+            return this;
+        }
 
-	public Hash error(ControlException controlException) {
-	    this.controlException = controlException;
-	    return this;
-	}
+        public Hash error(ControlException controlException) {
+            this.controlException = controlException;
+            return this;
+        }
 
-	private void handleError(Exception e) {
-	    controlException.apply(e);
-	}
+        private void handleError(Exception e) {
+            controlException.apply(e);
+        }
 
-	public void eval(Object evalKey) {
-	    try {
-		if (hash.containsKey(evalKey)) {
-		    hash.get(evalKey).apply();
-		} else {
-		    defaultUnit.apply();
-		}
-	    } catch (Exception e) {
-		handleError(e);
-	    }
-	}
+        public void eval(Object evalKey) {
+            try {
+                if (hash.containsKey(evalKey)) {
+                    hash.get(evalKey).apply();
+                } else {
+                    defaultUnit.apply();
+                }
+            } catch (Exception e) {
+                handleError(e);
+            }
+        }
 
     }
 
     static class Tree {
 
-	private static Logger logger = Logger.getLogger(Tree.class.getName());
-	private ControlException controlException = (e) -> {
-	    logger.log(Level.SEVERE, "got exception while tree cond, error: " + e, e);
-	};
-	private List<CheckUnitPair> checkUnitPairs = new LinkedList<>();
-	private Unit defaultUnit = Unit.empty();
+        private static Logger logger = Logger.getLogger(Tree.class.getName());
+        private ControlException controlException = (e) -> {
+            logger.log(Level.SEVERE, "got exception while tree cond, error: " + e, e);
+        };
+        private List<CheckUnitPair> checkUnitPairs = new LinkedList<>();
+        private Unit defaultUnit = Unit.empty();
 
-	private Tree() {
-	}
+        private Tree() {
+        }
 
-	public Tree check(Check check, Unit unit) {
-	    checkUnitPairs.add(new CheckUnitPair(check, unit));
-	    return this;
-	}
+        public Tree check(Check check, Unit unit) {
+            checkUnitPairs.add(new CheckUnitPair(check, unit));
+            return this;
+        }
 
-	public Tree otherwise(Unit unit) {
-	    this.defaultUnit = unit;
-	    return this;
-	}
+        public Tree otherwise(Unit unit) {
+            this.defaultUnit = unit;
+            return this;
+        }
 
-	public Tree error(ControlException controlException) {
-	    this.controlException = controlException;
-	    return this;
-	}
+        public Tree error(ControlException controlException) {
+            this.controlException = controlException;
+            return this;
+        }
 
-	private void handleError(Exception e) {
-	    controlException.apply(e);
-	}
+        private void handleError(Exception e) {
+            controlException.apply(e);
+        }
 
-	public void eval() {
-	    Optional<CheckUnitPair> cupOptional = checkUnitPairs
-		    .stream()
-		    .filter(cup -> {
-			try {
-			    return cup.check.apply();
-			} catch (Exception e) {
-			    cup.exception = e;
-			    return true;
-			}
-		    })
-		    .findFirst();
+        public void eval() {
+            Optional<CheckUnitPair> cupOptional = checkUnitPairs
+                    .stream()
+                    .filter(cup -> {
+                        try {
+                            return cup.check.apply();
+                        } catch (Exception e) {
+                            cup.exception = e;
+                            return true;
+                        }
+                    })
+                    .findFirst();
 
-	    try {
-		if (cupOptional.isPresent()) {
-		    handleCup(cupOptional);
-		} else {
-		    defaultUnit.apply();
-		}
-	    } catch (Exception e) {
-		handleError(e);
-	    }
-	}
+            try {
+                if (cupOptional.isPresent()) {
+                    handleCup(cupOptional);
+                } else {
+                    defaultUnit.apply();
+                }
+            } catch (Exception e) {
+                handleError(e);
+            }
+        }
 
-	private void handleCup(Optional<CheckUnitPair> cupOptional) throws Exception {
-	    CheckUnitPair cup = cupOptional.get();
-	    if (cup.exception == null) {
-		cup.unit.apply();
-	    } else {
-		throw cup.exception;
-	    }
-	}
+        private void handleCup(Optional<CheckUnitPair> cupOptional) throws Exception {
+            CheckUnitPair cup = cupOptional.get();
+            if (cup.exception == null) {
+                cup.unit.apply();
+            } else {
+                throw cup.exception;
+            }
+        }
 
-	class CheckUnitPair {
-	    private Check check;
-	    private Unit unit;
-	    private Exception exception;
+        class CheckUnitPair {
+            private Check check;
+            private Unit unit;
+            private Exception exception;
 
-	    private CheckUnitPair(Check check, Unit unit) {
-		this.check = check;
-		this.unit = unit;
-	    }
-	}
+            private CheckUnitPair(Check check, Unit unit) {
+                this.check = check;
+                this.unit = unit;
+            }
+        }
     }
 
 }

@@ -6,13 +6,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void setDao(UserDAO dao) {
-	this.dao = dao;
+        this.dao = dao;
     }
 
     @Override
     public String findUsername(Integer id) {
-	UserEntity userEntity = dao.findById(id);
-	return userEntity.getUsername();
+        UserEntity userEntity = dao.findById(id);
+        return userEntity.getUsername();
     }
 
 }

@@ -13,33 +13,33 @@ public class Panel {
     private Map<String, Panel> children = new TreeMap<>();
 
     public Panel(String title, int width, int height) {
-	this.title = title;
-	this.width = width;
-	this.height = height;
+        this.title = title;
+        this.width = width;
+        this.height = height;
     }
 
     public String getTitle() {
-	return title;
+        return title;
     }
 
     public int getWidth() {
-	return width;
+        return width;
     }
 
     public int getHeight() {
-	return height;
+        return height;
     }
 
     public void addChild(Panel child) {
-	this.children.put(child.getTitle(), child);
+        this.children.put(child.getTitle(), child);
     }
 
     public Collection<Panel> getChildren() {
-	return Collections.unmodifiableCollection(this.children.values());
+        return Collections.unmodifiableCollection(this.children.values());
     }
 
     public Panel removeChild(String title) {
-	return this.children.remove(title);
+        return this.children.remove(title);
     }
 
 }
